@@ -1,13 +1,3 @@
-const express = require("express");
-const cors = require("cors");
-const fetch = require("node-fetch"); // fetch 사용 시 필요
-
-const app = express();
-const PORT = process.env.PORT || 3000;
-
-app.use(cors());
-app.use(express.json());
-
 app.post("/chat", async (req, res) => {
   const userMessage = req.body.message;
 
@@ -33,19 +23,17 @@ app.post("/chat", async (req, res) => {
       }),
     });
 
-	
-	const data = await response.json();
-    console.log("OpenAI 응답:", data); // ← 이 줄 추가!
+    const data = await response.json();
+    console.log("OpenAI 응답:", data);
 
     const reply = data.choices?.[0]?.message?.content || "OpenAI 응답을 이해하지 못했어요.";
-res.json({ reply });
     res.json({ reply });
+
   } catch (err) {
     console.error("OpenAI 요청 오류:", err);
-    res.status(500).json({ error: "OpenAI 요청 중 문제가 발생했어요." });
+    // 여기서만 응답 보냄
+    if (!res.headersSent) {
+      res.status(500).json({ error: "OpenAI 요청 중 문제가 발생했어요." });
+    }
   }
-});
-
-app.listen(PORT, () => {
-  console.log(`서버가 포트 ${PORT}에서 실행 중`);
 });
