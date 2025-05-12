@@ -33,8 +33,12 @@ app.post("/chat", async (req, res) => {
       }),
     });
 
-    const data = await response.json();
+	
+	const data = await response.json();
+    console.log("OpenAI 응답:", data); // ← 이 줄 추가!
+
     const reply = data.choices?.[0]?.message?.content || "OpenAI 응답을 이해하지 못했어요.";
+res.json({ reply });
     res.json({ reply });
   } catch (err) {
     console.error("OpenAI 요청 오류:", err);
